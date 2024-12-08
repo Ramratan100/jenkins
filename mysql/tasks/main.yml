@@ -36,7 +36,5 @@
     name: root
     host: localhost
     password: "{{ mysql_root_password }}"
-    state: present
-    update_password: always
     login_unix_socket: "{{ mysql_socket }}"
   become: yes
