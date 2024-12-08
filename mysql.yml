@@ -3,7 +3,7 @@
   hosts: all
   become: yes  # Use 'become' to run tasks as a superuser
   vars:
-    mysql_root_password: "your_root_password"  # Set your desired root password
+    mysql_root_password: "your_new_password"  # Set your desired root password
     mysql_user: "myuser"                        # MySQL username to create
     mysql_user_password: "mypassword"           # Password for the new user
     mysql_database: "mydatabase"                 # Database to create
