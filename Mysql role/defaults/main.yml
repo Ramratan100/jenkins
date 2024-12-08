@@ -1,0 +1,26 @@
+---
+# MySQL version
+mysql_version: "8.0"
+
+# MySQL root password
+mysql_root_password: "your_secure_password_here"
+
+# MySQL configuration
+mysql_port: 3306
+mysql_bind_address: "127.0.0.1"
+
+# MySQL performance tuning
+mysql_key_buffer_size: "256M"
+mysql_max_allowed_packet: "64M"
+mysql_thread_stack: "192K"
+mysql_thread_cache_size: "8"
+
+# InnoDB settings
+innodb_buffer_pool_size: "256M"
+
+# Logging
+mysql_log_error: "/var/log/mysql/error.log"
+
+# Replication settings
+mysql_server_id: 1
+mysql_max_binlog_size: "100M"
