@@ -1,7 +1,7 @@
 ---
 - name: Install and Configure MySQL
   hosts: all
-  become: yes  # Use 'become' to run tasks as a superuser
+  become: yes
   vars:
     mysql_root_password: "your_new_password"  # Set your desired root password
     mysql_user: "myuser"                        # MySQL username to create
@@ -30,14 +30,6 @@
         password: "{{ mysql_root_password }}"
         host: localhost
         state: present
-      when: mysql_root_password is defined
-
-    - name: Secure MySQL installation
-      command: mysql_secure_installation
-      args:
-        creates: /etc/mysql/debian.cnf  # This file is created after securing MySQL
-      register: mysql_secure
-      ignore_errors: yes  # Ignore errors if already secured
 
     - name: Create a MySQL user
       mysql_user:
