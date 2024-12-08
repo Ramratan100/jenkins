@@ -1,7 +1,13 @@
 ---
-- name: Install MySQL
+- name: Install and Configure MySQL
   hosts: all
   become: yes  # Use 'become' to run tasks as a superuser
+  vars:
+    mysql_root_password: "your_root_password"  # Set your desired root password
+    mysql_user: "myuser"                        # MySQL username to create
+    mysql_user_password: "mypassword"           # Password for the new user
+    mysql_database: "mydatabase"                 # Database to create
+
   tasks:
     - name: Update apt cache
       apt:
@@ -18,6 +24,14 @@
         state: started
         enabled: yes
 
+    - name: Set MySQL root password
+      mysql_user:
+        name: root
+        password: "{{ mysql_root_password }}"
+        host: localhost
+        state: present
+      when: mysql_root_password is defined
+
     - name: Secure MySQL installation
       command: mysql_secure_installation
       args:
@@ -27,16 +41,20 @@
 
     - name: Create a MySQL user
       mysql_user:
-        name: myuser
-        password: mypassword
+        name: "{{ mysql_user }}"
+        password: "{{ mysql_user_password }}"
         host: localhost
         priv: '*.*:ALL'
         state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
 
     - name: Create a MySQL database
       mysql_db:
-        name: mydatabase
+        name: "{{ mysql_database }}"
         state: present
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
 
     - name: Ensure MySQL is listening on all interfaces
       lineinfile:
