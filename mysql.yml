@@ -55,7 +55,7 @@
         delay: 10
         timeout: 60
 
-    - name: Change MySQL root user authentication method
+    - name: Set MySQL root user password
       mysql_user:
         name: root
         host: localhost
