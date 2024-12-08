@@ -1,8 +1,0 @@
----
-mysql_dependencies:
-  - python3-pymysql
-
-mysql_package_name: "mysql-server"
-mysql_service_name: "mysql"
-mysql_config_file: "/etc/mysql/mysql.conf.d/mysqld.cnf"
-mysql_socket: "/var/run/mysqld/mysqld.sock"

@@ -1,9 +1,0 @@
-mysql_package_name: mysql-server
-mysql_service_name: mysql
-mysql_dependencies:
-  - libmysqlclient-dev
-  - mysql-common
-mysql_config_file: /etc/mysql/my.cnf
-mysql_socket: /var/run/mysqld/mysqld.sock
-mysql_root_password: "your_secure_root_password"
-mysql_infoschema_password: "your_secure_infoschema_password"  # Optional: set this if you need a password for infoschema
