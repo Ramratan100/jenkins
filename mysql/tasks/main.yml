@@ -1,64 +1,48 @@
 ---
-- name: Install and Configure MySQL
-  hosts: localhost
+- name: Install MySQL dependencies
+  package:
+    name: "{{ mysql_dependencies }}"
+    state: present
   become: yes
-  vars:
-    mysql_root_password: "your_new_root_password"  # Set the root password
-    mysql_infoschema_password: ""  # Optionally set password for mysql.infoschema user
 
-  tasks:
-    - name: Install MySQL dependencies
-      package:
-        name: "{{ mysql_dependencies }}"
-        state: present
-      become: yes
+- name: Install MySQL server
+  package:
+    name: "{{ mysql_package_name }}"
+    state: present
+  become: yes
 
-    - name: Install MySQL server
-      package:
-        name: "{{ mysql_package_name }}"
-        state: present
-      become: yes
+- name: Ensure MySQL service is running and enabled
+  service:
+    name: "{{ mysql_service_name }}"
+    state: started
+    enabled: yes
+  become: yes
 
-    - name: Ensure MySQL service is running and enabled
-      service:
-        name: "{{ mysql_service_name }}"
-        state: started
-        enabled: yes
-      become: yes
+- name: Ensure mysql.infoschema user exists (if needed)
+  mysql_user:
+    name: mysql.infoschema
+    host: localhost
+    state: present
+    password: "{{ mysql_infoschema_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  become: yes
 
-    - name: Ensure root user uses mysql_native_password
-      mysql_user:
-        name: root
-        host: localhost
-        password: "{{ mysql_root_password }}"
-        login_unix_socket: "{{ mysql_socket }}"
-        plugin: mysql_native_password
-      become: yes
+- name: Copy MySQL configuration file
+  template:
+    src: my.cnf.j2
+    dest: "{{ mysql_config_file }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart MySQL
+  become: yes
 
-    - name: Ensure mysql.infoschema user exists (if needed)
-      mysql_user:
-        name: mysql.infoschema
-        host: localhost
-        state: present
-        password: "{{ mysql_infoschema_password }}"
-        login_user: root
-        login_password: "{{ mysql_root_password }}"
-      become: yes
-
-    - name: Copy MySQL configuration file
-      template:
-        src: my.cnf.j2
-        dest: "{{ mysql_config_file }}"
-        owner: root
-        group: root
-        mode: '0644'
-      notify: Restart MySQL
-      become: yes
-
-    - name: Set MySQL root password
-      mysql_user:
-        name: root
-        host: localhost
-        password: "{{ mysql_root_password }}"
-        login_unix_socket: "{{ mysql_socket }}"
-      become: yes
+- name: Set MySQL root password
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mysql_root_password }}"
+    login_unix_socket: "{{ mysql_socket }}"
+    state: present
+  become: yes
