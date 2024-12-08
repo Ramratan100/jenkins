@@ -21,6 +21,16 @@
     enabled: yes
   become: yes
 
+- name: Ensure mysql.infoschema user exists (if needed)
+  mysql_user:
+    name: mysql.infoschema
+    host: localhost
+    state: present
+    password: "{{ mysql_infoschema_password }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  become: yes
+
 - name: Copy MySQL configuration file
   template:
     src: my.cnf.j2
@@ -37,4 +47,5 @@
     host: localhost
     password: "{{ mysql_root_password }}"
     login_unix_socket: "{{ mysql_socket }}"
+    state: present
   become: yes
