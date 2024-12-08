@@ -1,10 +1,52 @@
 ---
-- name: Install and configure MySQL
+- name: Install MySQL
   hosts: all
-  become: yes
-  vars:
-    mysql_root_password: "your_secure_password_here"
-  roles:
-    - mysql
-  tags:
-    - mysql
+  become: yes  # Use 'become' to run tasks as a superuser
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        state: present
+
+    - name: Ensure MySQL service is running
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Secure MySQL installation
+      command: mysql_secure_installation
+      args:
+        creates: /etc/mysql/debian.cnf  # This file is created after securing MySQL
+      register: mysql_secure
+      ignore_errors: yes  # Ignore errors if already secured
+
+    - name: Create a MySQL user
+      mysql_user:
+        name: myuser
+        password: mypassword
+        host: localhost
+        priv: '*.*:ALL'
+        state: present
+
+    - name: Create a MySQL database
+      mysql_db:
+        name: mydatabase
+        state: present
+
+    - name: Ensure MySQL is listening on all interfaces
+      lineinfile:
+        path: /etc/mysql/mysql.conf.d/mysqld.cnf
+        regexp: '^bind-address'
+        line: 'bind-address = 0.0.0.0'
+      notify: Restart MySQL
+
+  handlers:
+    - name: Restart MySQL
+      service:
+        name: mysql
+        state: restarted
