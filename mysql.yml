@@ -2,8 +2,6 @@
 - name: Remove and Reinstall MySQL
   hosts: localhost
   become: yes
-  vars:
-    mysql_root_password: "your_new_password"  # Set your desired root password
 
   tasks:
     - name: Stop MySQL service if running
@@ -54,16 +52,6 @@
         port: 3306
         delay: 10
         timeout: 60
-
-    - name: Set MySQL root user password
-      mysql_user:
-        name: root
-        host: localhost
-        password: "{{ mysql_root_password }}"
-        login_user: root
-        login_password: ""
-        state: present
-        update_password: always
 
     - name: Secure MySQL installation
       command: mysql_secure_installation
